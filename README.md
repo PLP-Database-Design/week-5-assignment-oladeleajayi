@@ -45,7 +45,7 @@ This demonstrates the cconnection of MySQL database and Node.js to create a simp
      console.log(`server is runnig on http://localhost:${PORT}`)
    })
    ```
-<br><br>
+<br><br>clear
 
 ## Run the server
    ```
