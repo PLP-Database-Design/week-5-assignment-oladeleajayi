@@ -1,28 +1,22 @@
-// import our dependencies
 
-const express = require("express");
-const app = express();
-const mysql = require('mysql2');
-const dotenv = require('dotenv');
 
-// //Basic end point to say Hello World!
-// app.get('/', (req, res) => {
-//     console.log('Received request');
-//     res.send("Hello World,Oladele is writing some code");
+// //Basic endpoint to say Hello World
+// app.get('', (req, res) => {
+//     res.send("Hello World,Oladele is writing some code,i was in canada yesterday")
 // })
 
-//Start and listen to the server
-app.listen(3000, () => {
-    console.log('server is running on port 3000...')
-});
 
-// // cors and ejs
-
-// // configure environment variables
-dotenv.config();
+// importing the neccessary dependancies
+const express = require('express')
+const mysql = require('mysql2')
+const dotenv = require('dotenv')
 
 
-// // create a connection object
+const app = express()
+dotenv.config()
+
+
+// create a connection object
 const db = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USERNAME,
@@ -30,40 +24,143 @@ const db = mysql.createConnection({
     database: process.env.DB_NAME
 })
 
-
 // test the connection
+db.connect((err) => {
+    // connection not successful
+    if (err) {
+        return console.log("Error connecting to MySQL", err)
+    }
+
+    // connection successful
+    console.log("MySQL connection successful")
+})
 
 
-//         return console.log("Error connecting to the database: ", err)
-//     }
+// ejs templating configuration
+// ejs for the assignment is not necessary
+app.set('view engine', 'ejs');
+app.set('views', __dirname + '/views');
 
-//     // connection is successful
-//     console.log("Successfully connected to MySQL: ", db.threadId)
-// })
+// Question 1
+app.get('/data', (req, res) => {
+    // Retrieve data from database 
+    db.query('SELECT * FROM patients', (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error Retrieving data')
+        } else {
+            //Display the records to the browser 
+            res.render('data', { results: results });
+        }
+    });
+});
+// get patients
+// '/get-patient' is a route
+app.get('/get-patients', (req, res) => {
+    const getPatients = "SELECT * FROM patients"
+
+    db.query(getPatients, (err, results) => {
+        // have an error
+        if (err) {
+            return res.status(500).send("Failed to fetch the patients")
+        }
+
+        // get back the data/results
+        res.status(200).send(results)
+    })
+})
+
+// Question 2
+app.get('/data', (req, res) => {
+    // Retrieve data from database 
+    db.query('SELECT * FROM providers', (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error Retrieving data')
+        } else {
+            //Display the records to the browser 
+            res.render('data', { results: results });
+        }
+    });
+});
+// get providers
+// '/get-providers' is a route
+app.get('/get-providers', (req, res) => {
+    const getProviders = "SELECT * FROM providers"
+
+    db.query(getProviders, (err, results) => {
+        // have an error
+        if (err) {
+            return res.status(500).send("Failed to fetch the providers")
+        }
+
+        // get back the data/results
+        res.status(200).send(results)
+    })
+})
+
+// Question 3
+app.get('/data', (req, res) => {
+    // Retrieve data from database 
+    db.query('SELECT first_name FROM patients', (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error Retrieving data')
+        } else {
+            //Display the records to the browser 
+            res.render('data', { results: results });
+        }
+    });
+});
+// get patients
+// '/get-patient' is a route
+app.get('/get-patients', (req, res) => {
+    const getPatients = "SELECT first_name FROM patients"
+
+    db.query(getPatients, (err, results) => {
+        // have an error
+        if (err) {
+            return res.status(500).send("Failed to fetch the first_name from patients")
+        }
+
+        // get back the data/results
+        res.status(200).send(results)
+    })
+})
 
 
-// // this is not important for the assignment
-// app.set('view engine', 'ejs');
-// app.set('views', __dirname + '/views');
+// Question 4
+app.get('/data', (req, res) => {
+    // Retrieve data from database 
+    db.query('SELECT provider_specialty FROM providers', (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error Retrieving data')
+        } else {
+            //Display the records to the browser 
+            res.render('data', { results: results });
+        }
+    });
+});
+// get providers
+// '/get-providers' is a route
+app.get('/get-providers', (req, res) => {
+    const getProviders = "SELECT provider_specialty  FROM providers"
+
+    db.query(getProviders, (err, results) => {
+        // have an error
+        if (err) {
+            return res.status(500).send("Failed to fetch the provider_specialty from providers")
+        }
+
+        // get back the data/results
+        res.status(200).send(results)
+    })
+})
 
 
-
-// // retrieve all patients
-// app.get('/get-patients', (req, res) => {
-//     const getPatients = "SELECT first_name, last_name FROM patients"
-//     db.query(getPatients, (err, data) => {
-//         // if I have an error
-//         if (err) {
-//             return res.status(400).send("Failed to get patients", err)
-//         }
-
-//         // res.status(200).render('data', { data })
-//         res.status(200).send(data)
-//     })
-// })
-
-
-// // start and listen to the server
-// app.listen(3300, () => {
-//     console.log(`server is running on port 3300...`)
-// })
+// delcare the port and listen to the server
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on PORT ${PORT}`)
+})
